@@ -7,3 +7,7 @@
 #' @docType package
 #' @name clbrief
 NULL
+
+# Import pipe
+#' @importFrom magrittr %>%
+NULL

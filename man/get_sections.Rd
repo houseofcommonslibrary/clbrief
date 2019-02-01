@@ -7,7 +7,7 @@
 get_sections(briefings_json)
 }
 \arguments{
-\item{briefings}{A list of briefings as returned by
+\item{briefings_json}{A list of briefings as returned by
 \code{fetch_briefings_json}}
 }
 \value{

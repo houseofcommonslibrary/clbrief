@@ -10,7 +10,7 @@
 #' included in the tibble returned by this function. See the other data
 #' processing functions for extracting nested data.
 #'
-#' @param briefings A list of briefings as returned by
+#' @param briefings_json A list of briefings as returned by
 #'   \code{fetch_briefings_json}
 #' @return A tibble of summary data on briefings.
 #' @export
@@ -51,7 +51,7 @@ get_briefings <- function(briefings_json) {
 #' as JSON and returns a tibble of topics for those briefings, with one row per
 #' unqiue combination of briefing and topic.
 #'
-#' @param briefings A list of briefings as returned by
+#' @param briefings_json A list of briefings as returned by
 #'   \code{fetch_briefings_json}
 #' @return A tibble of data on briefings and their topics in long form.
 #' @export
@@ -85,7 +85,7 @@ get_topics <- function(briefings_json) {
 #' and returns a tibble of authors for those briefings, with one row per unqiue
 #' combination of briefing and author.
 #'
-#' @param briefings A list of briefings as returned by
+#' @param briefings_json A list of briefings as returned by
 #'   \code{fetch_briefings_json}
 #' @return A tibble of data on briefings and their section in long form.
 #' @export
