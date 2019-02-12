@@ -65,6 +65,8 @@ get_topics <- function(briefings_json) {
         code <- briefing$identifier$`_value`
         title <- briefing$title
         publisher <- briefing$publisher$prefLabel$`_value`
+        type = briefing$type
+        subtype = briefing$subType$prefLabel$`_value`
         date <- as.Date(briefing$date$`_value`)
         url <- stringr::str_c(URL_BP, code)
         purrr::map(briefing$topic, function(topic) {
@@ -72,6 +74,8 @@ get_topics <- function(briefings_json) {
                 code = code,
                 title = title,
                 publisher = publisher,
+                type = type,
+                subtype = subtype,
                 date = date,
                 url = url,
                 topic = topic$prefLabel$`_value`)
@@ -99,6 +103,8 @@ get_sections <- function(briefings_json) {
         code <- briefing$identifier$`_value`
         title <- briefing$title
         publisher <- briefing$publisher$prefLabel$`_value`
+        type = briefing$type
+        subtype = briefing$subType$prefLabel$`_value`
         date <- as.Date(briefing$date$`_value`)
         url <- stringr::str_c(URL_BP, code)
         purrr::map(briefing$section, function(section) {
@@ -106,6 +112,8 @@ get_sections <- function(briefings_json) {
                 code = code,
                 title = title,
                 publisher = publisher,
+                type = type,
+                subtype = subtype,
                 date = date,
                 url = url,
                 section = section$prefLabel$`_value`)
