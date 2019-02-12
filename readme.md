@@ -2,6 +2,15 @@
 
 clbrief is a small R package for downloading data from the UK Parliament's Research Briefings API.
 
+## Installation
+
+Install from GitHub using devtools.
+
+``` r
+install.packages("devtools")
+devtools::install_github("olihawkins/clbrief")
+```
+
 ## Overview
 
 The UK Parliament's [Research Briefings API](http://explore.data.parliament.uk/?learnmore=Research%20Briefings) contains data on research briefings published by the House of Commons Library, the House of Lords Library, and the Parliamentary Office of Science and Technology (POST). You can see the stream of research briefings published at [researchbriefings.parliament.uk](https://researchbriefings.parliament.uk/). This package provides a simple way to access this data.
@@ -32,15 +41,6 @@ Wrapper functions are provided as a convenience if you are only interested in on
 
 ``` r
 briefing_topics <- clbrief::fetch_topics(pages = 1, pagesize = 100)
-```
-
-## Installation
-
-Install from GitHub using devtools.
-
-``` r
-install.packages("devtools")
-devtools::install_github("olihawkins/clbrief")
 ```
 
 ## Package status
