@@ -4,7 +4,7 @@
 \alias{update_archive}
 \title{Update a specific archive}
 \usage{
-update_archive(archive, snapshot, archive_file)
+update_archive(archive, data, archive_file)
 }
 \description{
 Update a specific archive

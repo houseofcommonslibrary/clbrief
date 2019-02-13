@@ -38,7 +38,6 @@ get_briefings <- function(briefings_json) {
             publisher = briefing$publisher$prefLabel$`_value`,
             type = briefing$subType$prefLabel$`_value`,
             date = as.Date(briefing$date$`_value`),
-            datetime = briefing$date$`_value`,
             url = stringr::str_c(URL_BP, code),
             description = description,
             abstract = abstract)

@@ -79,9 +79,9 @@ backup_archives <- function() {
     readr::write_excel_csv(authors_archive, AUTHORS_ARCHIVE_BACKUP)
 
     # Backup documents
-    authors_archive <- readr::read_csv(
-        AUTHORS_ARCHIVE, col_types = readr::cols())
-    readr::write_excel_csv(authors_archive, AUTHORS_ARCHIVE_BACKUP)
+    documents_archive <- readr::read_csv(
+        DOCUMENTS_ARCHIVE, col_types = readr::cols())
+    readr::write_excel_csv(documents_archive, DOCUMENTS_ARCHIVE_BACKUP)
 }
 
 #' Update the current archive files
@@ -100,13 +100,9 @@ update_archives <- function() {
 
     # Get briefings json and parse the data
     briefings_json <- fetch_briefings_json()
-    briefings_snapshot <- get_briefings(briefings_json)
-    topics_snapshot <- get_topics(briefings_json)
-    sections_snapshot <- get_sections(briefings_json)
-
-    all_json <- fetch_all_json(briefings_snapshot$resource)
-    authors_snapshot <- get_authors(all_json)
-    documents_snapshot <- get_documents(all_json)
+    briefings_data <- get_briefings(briefings_json)
+    topics_data <- get_topics(briefings_json)
+    sections_data <- get_sections(briefings_json)
 
     # Backup current archives
     backup_archives()
@@ -114,40 +110,50 @@ update_archives <- function() {
     # Update briefings
     briefings_archive <- readr::read_csv(
         BRIEFINGS_ARCHIVE, col_types = readr::cols())
-    update_archive(briefings_archive, briefings_snapshot, BRIEFINGS_ARCHIVE)
+    briefings_snapshot <- update_archive(
+        briefings_archive, briefings_data, BRIEFINGS_ARCHIVE)
 
     # Update topics
     topics_archive <- readr::read_csv(
         TOPICS_ARCHIVE, col_types = readr::cols())
-    update_archive(topics_archive, topics_snapshot, TOPICS_ARCHIVE)
+    topics_snapshot <- update_archive(
+        topics_archive, topics_data, TOPICS_ARCHIVE)
 
     # Update sections
     sections_archive <- readr::read_csv(
         SECTIONS_ARCHIVE, col_types = readr::cols())
-    update_archive(sections_archive, sections_snapshot, SECTIONS_ARCHIVE)
+    sections_snapshot <- update_archive(
+        sections_archive, sections_data, SECTIONS_ARCHIVE)
+
+    # Get briefings all json and parse the data
+    all_json <- fetch_all_json(briefings_snapshot$resource)
+    authors_data <- get_authors(all_json)
+    documents_data <- get_documents(all_json)
 
     # Update authors
     authors_archive <- readr::read_csv(
         AUTHORS_ARCHIVE, col_types = readr::cols())
-    update_archive(authors_archive, authors_snapshot, AUTHORS_ARCHIVE)
+    authors_snapshot <- update_archive(
+        authors_archive, authors_data, AUTHORS_ARCHIVE)
 
     # Update documents
     documents_archive <- readr::read_csv(
         DOCUMENTS_ARCHIVE, col_types = readr::cols())
-    update_archive(documents_archive, documents_snapshot, DOCUMENTS_ARCHIVE)
+    documents_snapshot <- update_archive(
+        documents_archive, documents_data, DOCUMENTS_ARCHIVE)
 }
 
 #' Update a specific archive
 #' @keywords internal
 
-update_archive <- function(archive, snapshot, archive_file) {
+update_archive <- function(archive, data, archive_file) {
 
     # Calculate dates
     from_date <- max(archive$date)
     to_date <- lubridate::today("GMT")
 
     # Filter the snapshot for new briefings
-    snapshot <- snapshot %>%
+    snapshot <- data %>%
         dplyr::filter(date > from_date & date < to_date)
 
     # Create the new archive
@@ -156,6 +162,9 @@ update_archive <- function(archive, snapshot, archive_file) {
 
     # Update the archive file
     readr::write_excel_csv(new_archive, archive_file)
+
+    # Return the filtered snapshot
+    snapshot
 }
 
 #' Revert the current archive files to the backup archive files
