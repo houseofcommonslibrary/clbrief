@@ -15,6 +15,6 @@ A tibble of data on briefings and their section in long form.
 }
 \description{
 \code{get_sections} takes a list of briefings returned from the API as JSON
-and returns a tibble of authors for those briefings, with one row per unqiue
-combination of briefing and author.
+and returns a tibble of sections for those briefings, with one row per
+unqiue combination of briefing and sections.
 }

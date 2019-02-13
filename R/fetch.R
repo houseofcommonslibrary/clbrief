@@ -17,8 +17,7 @@ fetch_briefings_json <- function(pages = 1, pagesize = 500, pause = 1) {
     if (pagesize > 500) stop("pagesize cannot be more than 500")
 
     urls <- purrr::map_chr(0:(pages-1), function(page) {
-        stringr::str_c(URL_API_BASE,
-                       stringr::str_glue("?_pageSize={pagesize}&_page={page}"))
+        stringr::str_glue("{URL_API_FEED}?_pageSize={pagesize}&_page={page}")
     })
 
     results <- purrr::map(urls, function(url) {
@@ -97,5 +96,32 @@ fetch_sections <- function(pages = 1, pagesize = 500, pause = 1) {
                                            pagesize = pagesize,
                                            pause = pause)
     get_sections(briefings_json)
+}
+
+#' Fetch all json data for a set of briefings
+#'
+#' \code{fetch_all_json} gets all of the available data for a set of briefings.
+#' This provides some data that is not available in the main research briefings
+#' feed and must be downloaded separately from the API for each individual
+#' briefing paper. This function will therefore make multiple calls to the API.
+#'
+#' @param resources A vector of resource urls for a set of briefing papers.
+#'   These are the urls stored in the first column of the dataframe returned by
+#'   \code{get_briefings} and \code{fetch_briefings}.
+#' @param pause The number of seconds to pause between page requests.
+#' @return A list of briefings as json.
+#' @export
+
+fetch_all_json <- function(resources, pause = 1) {
+
+    purrr::map(resources, function(resource) {
+        Sys.sleep(pause)
+        tokens <- stringr::str_split(resource, "/")[[1]]
+        id <- tokens[length(tokens)]
+        url <- stringr::str_glue("{URL_API_BRIEFING}{id}.json")
+        response <- httr::GET(url)
+        text <- httr::content(response, as = "text", encoding = "utf-8")
+        jsonlite::fromJSON(text, simplifyVector = FALSE)
+    })
 }
 
