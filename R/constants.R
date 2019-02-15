@@ -8,16 +8,16 @@ URL_BP = "https://researchbriefings.parliament.uk/ResearchBriefing/Summary/"
 
 # Archiving -------------------------------------------------------------------
 
-ARCHIVES_DIR <- "archives"
+DEFAULT_ARCHIVES <- "archives"
 
-BRIEFINGS_ARCHIVE <- file.path(ARCHIVES_DIR, "briefings.csv")
-TOPICS_ARCHIVE <- file.path(ARCHIVES_DIR, "topics.csv")
-SECTIONS_ARCHIVE <- file.path(ARCHIVES_DIR, "sections.csv")
-AUTHORS_ARCHIVE <- file.path(ARCHIVES_DIR, "authors.csv")
-DOCUMENTS_ARCHIVE <- file.path(ARCHIVES_DIR, "documents.csv")
+BRIEFINGS_ARCHIVE <- "briefings.csv"
+TOPICS_ARCHIVE <- "topics.csv"
+SECTIONS_ARCHIVE <- "sections.csv"
+AUTHORS_ARCHIVE <- "authors.csv"
+DOCUMENTS_ARCHIVE <- "documents.csv"
 
-BRIEFINGS_ARCHIVE_BACKUP <- file.path(ARCHIVES_DIR, "backup_briefings.csv")
-TOPICS_ARCHIVE_BACKUP <- file.path(ARCHIVES_DIR, "backup_topics.csv")
-SECTIONS_ARCHIVE_BACKUP <- file.path(ARCHIVES_DIR, "backup_sections.csv")
-AUTHORS_ARCHIVE_BACKUP <- file.path(ARCHIVES_DIR, "backup_authors.csv")
-DOCUMENTS_ARCHIVE_BACKUP <- file.path(ARCHIVES_DIR, "backup_documents.csv")
+BRIEFINGS_ARCHIVE_BACKUP <- "backup_briefings.csv"
+TOPICS_ARCHIVE_BACKUP <- "backup_topics.csv"
+SECTIONS_ARCHIVE_BACKUP <- "backup_sections.csv"
+AUTHORS_ARCHIVE_BACKUP <- "backup_authors.csv"
+DOCUMENTS_ARCHIVE_BACKUP <- "backup_documents.csv"
