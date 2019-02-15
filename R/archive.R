@@ -110,7 +110,7 @@ update_archives <- function(archives = DEFAULT_ARCHIVES) {
     sections_data <- get_sections(briefings_json)
 
     # Backup current archives
-    backup_archives()
+    backup_archives(archives)
 
     # Update briefings
     briefings_archive <- readr::read_csv(
