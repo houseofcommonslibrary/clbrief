@@ -1,6 +1,6 @@
 Package: clbrief
 Type: Package
-Title: A package for downloading data on Parliamentary Research Briefings
+Title: Download data on Parliamentary Research Briefings
 Version: 0.1.5
 Author: Oliver Hawkins
 Maintainer: Oliver Hawkins <oli@olihawkins.com>
