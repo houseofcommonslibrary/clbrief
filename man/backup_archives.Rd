@@ -4,7 +4,10 @@
 \alias{backup_archives}
 \title{Backup the current archive files}
 \usage{
-backup_archives()
+backup_archives(archives = DEFAULT_ARCHIVES)
+}
+\arguments{
+\item{archives}{The name of the folder to use for the archives.}
 }
 \description{
 Backup the current archive files

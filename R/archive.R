@@ -1,11 +1,13 @@
 ### Functions for downloading and archiving data on Research Briefings
 
 #' Create initial archive files
+#'
+#' @param archives The name of the folder to use for the archives.
 #' @export
 
 create_archives <- function(archives = DEFAULT_ARCHIVES) {
 
-    from_date <- lubridate::today("GMT") - lubridate::days(1)
+    from_date <- lubridate::today(Sys.timezone()) - lubridate::days(1)
 
     if (file.exists(file.path(archives, BRIEFINGS_ARCHIVE)) ||
         file.exists(file.path(archives, TOPICS_ARCHIVE)) ||
@@ -45,6 +47,8 @@ create_archives <- function(archives = DEFAULT_ARCHIVES) {
 }
 
 #' Backup the current archive files
+#'
+#' @param archives The name of the folder to use for the archives.
 #' @export
 
 backup_archives <- function(archives = DEFAULT_ARCHIVES) {
@@ -90,6 +94,8 @@ backup_archives <- function(archives = DEFAULT_ARCHIVES) {
 }
 
 #' Update the current archive files
+#'
+#' @param archives The name of the folder to use for the archives.
 #' @export
 
 update_archives <- function(archives = DEFAULT_ARCHIVES) {
@@ -184,8 +190,9 @@ update_archive <- function(archive, data, archive_file) {
 
 #' Revert the current archive files to the backup archive files
 #'
+#' @param archives The name of the folder to use for the archives.
 #' @param confirm The user must manually set confirm to TRUE on the function
-#'   call to revert the data. This is to guard against user error,
+#'   call to revert the data. This is to guard against user error.
 #' @export
 
 revert_archives <- function(archives = DEFAULT_ARCHIVES, confirm = FALSE) {

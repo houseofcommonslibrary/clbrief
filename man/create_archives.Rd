@@ -4,7 +4,10 @@
 \alias{create_archives}
 \title{Create initial archive files}
 \usage{
-create_archives()
+create_archives(archives = DEFAULT_ARCHIVES)
+}
+\arguments{
+\item{archives}{The name of the folder to use for the archives.}
 }
 \description{
 Create initial archive files

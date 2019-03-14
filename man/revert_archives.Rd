@@ -4,11 +4,13 @@
 \alias{revert_archives}
 \title{Revert the current archive files to the backup archive files}
 \usage{
-revert_archives(confirm = FALSE)
+revert_archives(archives = DEFAULT_ARCHIVES, confirm = FALSE)
 }
 \arguments{
+\item{archives}{The name of the folder to use for the archives.}
+
 \item{confirm}{The user must manually set confirm to TRUE on the function
-call to revert the data. This is to guard against user error,}
+call to revert the data. This is to guard against user error.}
 }
 \description{
 Revert the current archive files to the backup archive files

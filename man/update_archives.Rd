@@ -4,7 +4,10 @@
 \alias{update_archives}
 \title{Update the current archive files}
 \usage{
-update_archives()
+update_archives(archives = DEFAULT_ARCHIVES)
+}
+\arguments{
+\item{archives}{The name of the folder to use for the archives.}
 }
 \description{
 Update the current archive files
