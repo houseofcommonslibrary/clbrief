@@ -18,7 +18,9 @@ Imports:
     magrittr,
     purrr,
     readr,
+    rlang,
     RSQLite,
-    stringr
+    stringr,
+    tibble
 Suggests: testthat
 RoxygenNote: 6.1.1

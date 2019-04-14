@@ -4,7 +4,8 @@
 
 #' Create database from csvs
 #'
-#' @param dbfile Path to create a SQLite briefings database
+#' @param dbfile Path to create a SQLite briefings database.
+#' @param dbdir Path to the directory containing the csvs to import.
 #' @export
 
 create_db <- function(dbfile = BRIEFINGS_DB, dbdir = DATABASE_DIR) {
@@ -44,7 +45,8 @@ create_db <- function(dbfile = BRIEFINGS_DB, dbdir = DATABASE_DIR) {
 
 #' Extract database to csvs
 #'
-#' @param dbfile Path to a SQLite briefings database
+#' @param dbfile Path to a SQLite briefings database.
+#' @param dbdir Path to the directory containing the csvs to import.
 #' @export
 
 extract_db <- function(dbfile = BRIEFINGS_DB, dbdir = DATABASE_DIR) {

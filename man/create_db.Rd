@@ -7,7 +7,9 @@
 create_db(dbfile = BRIEFINGS_DB, dbdir = DATABASE_DIR)
 }
 \arguments{
-\item{dbfile}{Path to create a SQLite briefings database}
+\item{dbfile}{Path to create a SQLite briefings database.}
+
+\item{dbdir}{Path to the directory containing the csvs to import.}
 }
 \description{
 Create database from csvs
