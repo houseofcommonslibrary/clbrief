@@ -21,3 +21,15 @@ TOPICS_ARCHIVE_BACKUP <- "backup_topics.csv"
 SECTIONS_ARCHIVE_BACKUP <- "backup_sections.csv"
 AUTHORS_ARCHIVE_BACKUP <- "backup_authors.csv"
 DOCUMENTS_ARCHIVE_BACKUP <- "backup_documents.csv"
+
+# Database --------------------------------------------------------------------
+
+DATABASE_DIR <- "database"
+BRIEFINGS_DB <- file.path(DATABASE_DIR, "briefings.sqlite")
+BACKUP_DB <- file.path(DATABASE_DIR, "briefings-backup.sqlite")
+
+BRIEFINGS_CSV <- "briefings.csv"
+TOPICS_CSV <- "topics.csv"
+SECTIONS_CSV <- "sections.csv"
+AUTHORS_CSV <- "authors.csv"
+DOCUMENTS_CSV <- "documents.csv"

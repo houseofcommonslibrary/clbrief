@@ -1,4 +1,4 @@
-### Functions for downloading and archiving data on Research Briefings
+### Functions for downloading and archiving data
 
 #' Create initial archive files
 #'
