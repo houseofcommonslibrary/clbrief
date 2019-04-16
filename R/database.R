@@ -108,7 +108,7 @@ update_db <- function(dbfile = BRIEFINGS_DB, backup_dbfile = BACKUP_DB) {
     }
 
     # Backup current database
-    backup_success <- file.copy(dbfile, backup_dbfile)
+    backup_success <- file.copy(dbfile, backup_dbfile, overwrite = TRUE)
     if(! backup_success) stop("Cannot update the database: backup failed")
 
     # Get database connection
