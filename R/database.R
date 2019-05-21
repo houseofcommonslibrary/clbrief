@@ -147,7 +147,7 @@ update_db_briefings <- function(
         has_own_connection <- TRUE
     }
 
-    # Get a snapshot of new reocrds
+    # Get a snapshot of new records
     date_dbl <- DBI::dbGetQuery(dbc, "SELECT MAX(date) FROM briefings;")[1,]
     from_date <- as.Date(date_dbl, lubridate::origin)
     to_date <- lubridate::today("GMT")
@@ -221,7 +221,7 @@ update_db_topics <- function(
         has_own_connection <- TRUE
     }
 
-    # Get a snapshot of new reocrds
+    # Get a snapshot of new records
     date_dbl <- DBI::dbGetQuery(dbc, "SELECT MAX(date) FROM topics;")[1,]
     from_date <- as.Date(date_dbl, lubridate::origin)
     to_date <- lubridate::today("GMT")
@@ -292,7 +292,7 @@ update_db_sections <- function(
         has_own_connection <- TRUE
     }
 
-    # Get a snapshot of new reocrds
+    # Get a snapshot of new records
     date_dbl <- DBI::dbGetQuery(dbc, "SELECT MAX(date) FROM sections;")[1,]
     from_date <- as.Date(date_dbl, lubridate::origin)
     to_date <- lubridate::today("GMT")
@@ -363,7 +363,7 @@ update_db_authors <- function(
         has_own_connection <- TRUE
     }
 
-    # Get a snapshot of new reocrds
+    # Get a snapshot of new records
     date_dbl <- DBI::dbGetQuery(dbc, "SELECT MAX(date) FROM authors;")[1,]
     from_date <- as.Date(date_dbl, lubridate::origin)
     to_date <- lubridate::today("GMT")
@@ -440,7 +440,7 @@ update_db_documents <- function(
         has_own_connection <- TRUE
     }
 
-    # Get a snapshot of new reocrds
+    # Get a snapshot of new records
     date_dbl <- DBI::dbGetQuery(dbc, "SELECT MAX(date) FROM documents;")[1,]
     from_date <- as.Date(date_dbl, lubridate::origin)
     to_date <- lubridate::today("GMT")
