@@ -157,14 +157,42 @@ get_authors <- function(briefings_all_json) {
 
         if (! is.null(conjson)) {
             if (! is.null(names(conjson))) {
+
+                if (! is.null(conjson$givenName$`_value`)) {
+                    given_name <- conjson$givenName$`_value`
+                } else {
+                    given_name <- NA
+                }
+
+                if (! is.null(conjson$familyName$`_value`)) {
+                    family_name <- conjson$familyName$`_value`
+                } else {
+                    family_name <- NA
+                }
+
                 creators <- list(list(
-                    given_name = conjson$givenName$`_value`,
-                    family_name = conjson$familyName$`_value`))
+                    given_name = given_name,
+                    family_name = family_name))
+
             } else {
+
                 creators <- purrr::map(conjson, function(creator) {
+
+                    if (! is.null(creator$givenName$`_value`)) {
+                        given_name <- creator$givenName$`_value`
+                    } else {
+                        given_name <- NA
+                    }
+
+                    if (! is.null(creator$familyName$`_value`)) {
+                        family_name <- creator$familyName$`_value`
+                    } else {
+                        family_name <- NA
+                    }
+
                     list(
-                        given_name = creator$givenName$`_value`,
-                        family_name = creator$familyName$`_value`)
+                        given_name = given_name,
+                        family_name = family_name)
                 })
             }
         }
@@ -189,14 +217,42 @@ get_authors <- function(briefings_all_json) {
 
         if (! is.null(rcjson)) {
             if (! is.null(names(rcjson))) {
+
+                if (! is.null(rcjson$givenName$`_value`)) {
+                    given_name <- rcjson$givenName$`_value`
+                } else {
+                    given_name <- NA
+                }
+
+                if (! is.null(rcjson$givenName$`_value`)) {
+                    family_name <- rcjson$familyName$`_value`
+                } else {
+                    family_name <- NA
+                }
+
                 contributors  <- list(list(
-                    given_name = rcjson$givenName$`_value`,
-                    family_name = rcjson$familyName$`_value`))
+                    given_name = given_name,
+                    family_name = family_name))
+
             } else {
+
                 contributors  <- purrr::map(rcjson, function(contributor) {
+
+                    if (! is.null(contributor$givenName$`_value`)) {
+                        given_name <- contributor$givenName$`_value`
+                    } else {
+                        given_name <- NA
+                    }
+
+                    if (! is.null(contributor$familyName$`_value`)) {
+                        family_name <- contributor$familyName$`_value`
+                    } else {
+                        family_name <- NA
+                    }
+
                     list(
-                        given_name = contributor$givenName$`_value`,
-                        family_name = contributor$familyName$`_value`)
+                        given_name = given_name,
+                        family_name = family_name)
                 })
             }
         }
@@ -220,6 +276,7 @@ get_authors <- function(briefings_all_json) {
 
     dplyr::bind_rows(unlist(authors, recursive = FALSE))
 }
+
 
 #' Get a tibble of documents for each briefing
 #'
