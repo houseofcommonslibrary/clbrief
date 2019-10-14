@@ -156,6 +156,7 @@ get_authors <- function(briefings_all_json) {
         conjson <- briefing$creator
 
         if (! is.null(conjson)) {
+
             if (! is.null(names(conjson))) {
 
                 if (! is.null(conjson$givenName$`_value`)) {
@@ -178,15 +179,23 @@ get_authors <- function(briefings_all_json) {
 
                 creators <- purrr::map(conjson, function(creator) {
 
-                    if (! is.null(creator$givenName$`_value`)) {
-                        given_name <- creator$givenName$`_value`
-                    } else {
-                        given_name <- NA
-                    }
+                    if (! is.null(names(creator))) {
 
-                    if (! is.null(creator$familyName$`_value`)) {
-                        family_name <- creator$familyName$`_value`
+                        if (! is.null(creator$givenName$`_value`)) {
+                            given_name <- creator$givenName$`_value`
+                        } else {
+                            given_name <- NA
+                        }
+
+                        if (! is.null(creator$familyName$`_value`)) {
+                            family_name <- creator$familyName$`_value`
+                        } else {
+                            family_name <- NA
+                        }
+
                     } else {
+
+                        given_name <- NA
                         family_name <- NA
                     }
 
@@ -216,6 +225,7 @@ get_authors <- function(briefings_all_json) {
         rcjson <- briefing$researchContributor
 
         if (! is.null(rcjson)) {
+
             if (! is.null(names(rcjson))) {
 
                 if (! is.null(rcjson$givenName$`_value`)) {
@@ -238,15 +248,23 @@ get_authors <- function(briefings_all_json) {
 
                 contributors  <- purrr::map(rcjson, function(contributor) {
 
-                    if (! is.null(contributor$givenName$`_value`)) {
-                        given_name <- contributor$givenName$`_value`
-                    } else {
-                        given_name <- NA
-                    }
+                    if (! is.null(names(contributor))) {
 
-                    if (! is.null(contributor$familyName$`_value`)) {
-                        family_name <- contributor$familyName$`_value`
+                        if (! is.null(contributor$givenName$`_value`)) {
+                            given_name <- contributor$givenName$`_value`
+                        } else {
+                            given_name <- NA
+                        }
+
+                        if (! is.null(contributor$familyName$`_value`)) {
+                            family_name <- contributor$familyName$`_value`
+                        } else {
+                            family_name <- NA
+                        }
+
                     } else {
+
+                        given_name <- NA
                         family_name <- NA
                     }
 
