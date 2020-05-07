@@ -4,18 +4,20 @@ clbrief is a small R package for downloading data from the UK Parliament's Resea
 
 ## Installation
 
-Install from GitHub using devtools.
+Install from GitHub using remotes.
 
 ``` r
-install.packages("devtools")
-devtools::install_github("olihawkins/clbrief")
+install.packages("remotes")
+remotes::install_github("olihawkins/clbrief")
 ```
 
 ## Overview
 
-The UK Parliament's [Research Briefings API](http://explore.data.parliament.uk/?learnmore=Research%20Briefings) contains data on research briefings published by the House of Commons Library, the House of Lords Library, and the Parliamentary Office of Science and Technology (POST). You can see the stream of research briefings published at [researchbriefings.parliament.uk](https://researchbriefings.parliament.uk/). This package provides a simple way to access this data.
+The UK Parliament's [Research Briefings API](http://explore.data.parliament.uk/?learnmore=Research%20Briefings) contains data on research briefings published by the House of Commons Library, the House of Lords Library, and the Parliamentary Office of Science and Technology (POST). You can find the research briefings published at [researchbriefings.parliament.uk](https://researchbriefings.parliament.uk/). This package provides a simple way to access this data.
 
-At the heart of the package is a single function called `fetch_briefings_json` which downloads a given number of the most recent briefings published, based on the requested number of pages of results and a given number of items per page. The API will return a maximum of 500 briefings per page of results and this is the default `pagesize`. The function will throw an error if you use a `pagesize` of more than 500.
+## Core API
+
+At the heart of the package is a function called `fetch_briefings_json` which downloads data for a given number of the most recent briefings published, based on the requested number of pages of results and a given number of items per page. The API will return a maximum of 500 briefings per page of results and this is the default `pagesize`. The function will throw an error if you use a `pagesize` of more than 500.
 
 To fetch data on the last 100 briefings published:
 
@@ -43,11 +45,7 @@ Wrapper functions are provided as a convenience if you are only interested in on
 briefing_topics <- clbrief::fetch_topics(pages = 1, pagesize = 100)
 ```
 
-## Package status
-
-This is an ad-hoc package that was developed to provide quick access to research briefings data. The package does not yet have unit tests, but the functions appear to work as intended. You should satisfy yourself that the functions behave in the way that you expect if you wish to use this package for research purposes.
-
-## Fetch JSON
+### Fetch JSON
 
 Functions that make calls to the API are prefixed `fetch_*`.
 
@@ -59,7 +57,7 @@ Fetches data on all research briefings up to a given number derived from the num
 
 ---
 
-## Extract tibbles
+### Extract tibbles
 
 Functions that extract and process the downloaded data locally are prefixed `get_*`. These functions return the data as a tibble.
 
@@ -83,7 +81,7 @@ Extracts data about the Parliamentary sections responsible for producing each re
 
 ---
 
-## Fetch JSON and extract tibbles
+### Fetch JSON and extract tibbles
 
 These functions fetch the requested briefings, extract and process the data, and return the data as a tibble. These are convenience functions: if you wish to extract more than one dataset on a given set of briefings it is more efficient to download the data once with `fetch_briefings_json` and extract each of the relevant datasets from that data.
 
@@ -106,3 +104,7 @@ _clbrief_::__fetch_sections__(_pages = 1_, _pagesize = 500_, _pause = 1_)
 Fetches and extracts data about the Parliamentary sections responsible for producing each research briefing, with one row per combination of briefing and section. Note that data on the section responsible for a briefing is not always provided by the publisher, so _briefings without sections will not be returned from this function_. You can find briefings without sections by looking for all briefing codes that are returned by `get_briefings` that do not appear in the tibble returned from `get_sections` for the same dataset.
 
 ---
+
+## Package status
+
+This is an ad-hoc package that was developed to provide quick access to research briefings data. The package does not yet have unit tests, but the functions appear to work as intended. You should satisfy yourself that the functions behave in the way that you expect if you wish to use this package for research purposes.

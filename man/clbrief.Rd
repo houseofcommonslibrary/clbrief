@@ -3,7 +3,6 @@
 \docType{package}
 \name{clbrief}
 \alias{clbrief}
-\alias{clbrief-package}
 \title{clbrief: A package for downloading data from the Research Briefings API}
 \description{
 The Research Briefings API contains data on all research briefings published

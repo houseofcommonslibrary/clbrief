@@ -1,84 +1,40 @@
-### Functions for downloading and storing daily publication data in a database
+### Functions for downloading and storing a mirror of the data in the API
 
-# Create database -------------------------------------------------------------
+# Create mirror ---------------------------------------------------------------
 
-#' Create database from csvs
+#' Create a mirror from csvs
 #'
 #' @param dbfile Path to create a SQLite briefings database.
 #' @param dbdir Path to the directory containing the csvs to import.
 #' @export
 
-create_db <- function(dbfile = BRIEFINGS_DB, dbdir = DATABASE_DIR) {
-
-    dbc <- DBI::dbConnect(RSQLite::SQLite(), dbfile)
-
-    briefings <- file.path(dbdir, BRIEFINGS_CSV) %>%
-        readr::read_csv() %>%
-        dplyr::arrange(date)
-
-    topics <- file.path(dbdir, TOPICS_CSV) %>%
-        readr::read_csv() %>%
-        dplyr::arrange(date)
-
-    sections <- file.path(dbdir, SECTIONS_CSV) %>%
-        readr::read_csv() %>%
-        dplyr::arrange(date)
-
-    authors <- file.path(dbdir, AUTHORS_CSV) %>%
-        readr::read_csv() %>%
-        dplyr::arrange(date)
-
-    documents <- file.path(dbdir, DOCUMENTS_CSV) %>%
-        readr::read_csv() %>%
-        dplyr::arrange(date)
-
-    DBI::dbWriteTable(dbc, "briefings", briefings)
-    DBI::dbWriteTable(dbc, "topics", topics)
-    DBI::dbWriteTable(dbc, "sections", sections)
-    DBI::dbWriteTable(dbc, "authors", authors)
-    DBI::dbWriteTable(dbc, "documents", documents)
-
-    DBI::dbDisconnect(dbc)
+create_mirror <- function(dbfile = MIRROR_DB, dbdir = DATABASE_DIR) {
+    create_db(dbfile = dbfile, dbdir = dbdir)
 }
 
-# Extract database ------------------------------------------------------------
+# Extract mirror --------------------------------------------------------------
 
-#' Extract database to csvs
+#' Extract a mirror to csvs
 #'
 #' @param dbfile Path to a SQLite briefings database.
 #' @param dbdir Path to the directory containing the csvs to import.
 #' @export
 
-extract_db <- function(dbfile = BRIEFINGS_DB, dbdir = DATABASE_DIR) {
-
-    dbc <- DBI::dbConnect(RSQLite::SQLite(), dbfile)
-
-    briefings <- get_db_briefings(dbc)
-    topics <- get_db_topics(dbc)
-    sections <- get_db_sections(dbc)
-    authors <- get_db_authors(dbc)
-    documents <- get_db_documents(dbc)
-
-    DBI::dbDisconnect(dbc)
-
-    readr::write_csv(briefings, file.path(dbdir, BRIEFINGS_CSV))
-    readr::write_csv(topics, file.path(dbdir, TOPICS_CSV))
-    readr::write_csv(sections, file.path(dbdir, SECTIONS_CSV))
-    readr::write_csv(authors, file.path(dbdir, AUTHORS_CSV))
-    readr::write_csv(documents, file.path(dbdir, DOCUMENTS_CSV))
+extract_mirror <- function(dbfile = MIRROR_DB, dbdir = DATABASE_DIR) {
+    extract_db(dbfile = dbfile, dbdir = dbdir)
 }
 
-# Update database -------------------------------------------------------------
+# Update mirror ---------------------------------------------------------------
 
-#' Update the database
+#' Update the mirror
 #'
 #' @param dbfile Path to a SQLite briefings database.
 #' @param backup_dbfile Path to a backup SQLite briefings database.
 #' @export
 
-update_db <- function(
-    dbfile = BRIEFINGS_DB,
-    backup_dbfile = BRIEFINGS_BACKUP_DB) {
+update_mirror <- function(
+    dbfile = MIRROR_DB,
+    backup_dbfile = MIRROR_BACKUP_DB) {
 
     # Define an update function to succeed or fail atomically
     update_tables <- function(dbc) {
@@ -90,9 +46,9 @@ update_db <- function(
         sections_data <- get_sections(briefings_json)
 
         # Update briefings, topics and authors from briefings_json
-        briefings_snapshot <- update_db_briefings(briefings_data, dbc)
-        topics_snapshot <- update_db_topics(topics_data, dbc)
-        sections_snapshot <- update_db_sections(sections_data, dbc)
+        briefings_snapshot <- update_mirror_briefings(briefings_data, dbc)
+        topics_snapshot <- update_mirror_topics(topics_data, dbc)
+        sections_snapshot <- update_mirror_sections(sections_data, dbc)
 
         # Get briefings all json and parse the data
         all_json <- fetch_all_json(briefings_snapshot$resource)
@@ -100,8 +56,8 @@ update_db <- function(
         documents_data <- get_documents(all_json)
 
         # Update authors and documents from all_json
-        authors_snapshot <- update_db_authors(authors_data, dbc)
-        documents_snapshot <- update_db_documents(documents_data, dbc)
+        authors_snapshot <- update_mirror_authors(authors_data, dbc)
+        documents_snapshot <- update_mirror_documents(documents_data, dbc)
     }
 
     # Check database exists
@@ -129,7 +85,7 @@ update_db <- function(
     })
 }
 
-# Update tables ---------------------------------------------------------------
+# Update mirror tables --------------------------------------------------------
 
 #' Update the briefings table with new data from the api
 #'
@@ -138,8 +94,8 @@ update_db <- function(
 #' @param dbfile Path to a SQLite briefings database.
 #' @export
 
-update_db_briefings <- function(
-    briefings_data, dbc = NULL, dbfile = BRIEFINGS_DB) {
+update_mirror_briefings <- function(
+    briefings_data, dbc = NULL, dbfile = MIRROR_DB) {
 
     # Determine if the function sould create its own conection or not
     has_own_connection <- FALSE
@@ -155,7 +111,19 @@ update_db_briefings <- function(
     to_date <- lubridate::today("GMT")
 
     briefings_snapshot <- briefings_data %>%
-        dplyr::filter(date > from_date & date < to_date)
+        dplyr::filter(date >= from_date & date <= to_date)
+
+    # Build and run the query to delete updated briefings
+    query <- "DELETE FROM briefings WHERE resource = :resource"
+
+    rs <- DBI::dbSendStatement(dbc, query)
+
+    purrr::pmap(briefings_snapshot, function(...) {
+        briefing <- list(...)
+        DBI::dbBind(rs, param = list(resource = briefing$resource))
+    })
+
+    DBI::dbClearResult(rs)
 
     # Build and run the query to insert each row
     query <- "
@@ -212,8 +180,8 @@ update_db_briefings <- function(
 #' @param dbfile Path to a SQLite briefings database.
 #' @export
 
-update_db_topics <- function(
-    topics_data, dbc = NULL, dbfile = BRIEFINGS_DB) {
+update_mirror_topics <- function(
+    topics_data, dbc = NULL, dbfile = MIRROR_DB) {
 
     # Determine if the function sould create its own conection or not
     has_own_connection <- FALSE
@@ -229,7 +197,19 @@ update_db_topics <- function(
     to_date <- lubridate::today("GMT")
 
     topics_snapshot <- topics_data %>%
-        dplyr::filter(date > from_date & date < to_date)
+        dplyr::filter(date >= from_date & date <= to_date)
+
+    # Build and run the query to delete updated briefings
+    query <- "DELETE FROM topics WHERE resource = :resource"
+
+    rs <- DBI::dbSendStatement(dbc, query)
+
+    purrr::pmap(topics_snapshot, function(...) {
+        topic <- list(...)
+        DBI::dbBind(rs, param = list(resource = topic$resource))
+    })
+
+    DBI::dbClearResult(rs)
 
     # Build and run the query to insert each row
     query <- "
@@ -283,8 +263,8 @@ update_db_topics <- function(
 #' @param dbfile Path to a SQLite briefings database.
 #' @export
 
-update_db_sections <- function(
-    sections_data, dbc = NULL, dbfile = BRIEFINGS_DB) {
+update_mirror_sections <- function(
+    sections_data, dbc = NULL, dbfile = MIRROR_DB) {
 
     # Determine if the function sould create its own conection or not
     has_own_connection <- FALSE
@@ -300,7 +280,19 @@ update_db_sections <- function(
     to_date <- lubridate::today("GMT")
 
     sections_snapshot <- sections_data %>%
-        dplyr::filter(date > from_date & date < to_date)
+        dplyr::filter(date >= from_date & date <= to_date)
+
+    # Build and run the query to delete updated briefings
+    query <- "DELETE FROM sections WHERE resource = :resource"
+
+    rs <- DBI::dbSendStatement(dbc, query)
+
+    purrr::pmap(sections_snapshot, function(...) {
+        section <- list(...)
+        DBI::dbBind(rs, param = list(resource = section$resource))
+    })
+
+    DBI::dbClearResult(rs)
 
     # Build and run the query to insert each row
     query <- "
@@ -354,8 +346,8 @@ update_db_sections <- function(
 #' @param dbfile Path to a SQLite briefings database.
 #' @export
 
-update_db_authors <- function(
-    authors_data, dbc = NULL, dbfile = BRIEFINGS_DB) {
+update_mirror_authors <- function(
+    authors_data, dbc = NULL, dbfile = MIRROR_DB) {
 
     # Determine if the function sould create its own conection or not
     has_own_connection <- FALSE
@@ -371,7 +363,19 @@ update_db_authors <- function(
     to_date <- lubridate::today("GMT")
 
     authors_snapshot <- authors_data %>%
-        dplyr::filter(date > from_date & date < to_date)
+        dplyr::filter(date >= from_date & date <= to_date)
+
+    # Build and run the query to delete updated briefings
+    query <- "DELETE FROM authors WHERE resource = :resource"
+
+    rs <- DBI::dbSendStatement(dbc, query)
+
+    purrr::pmap(authors_snapshot, function(...) {
+        author <- list(...)
+        DBI::dbBind(rs, param = list(resource = author$resource))
+    })
+
+    DBI::dbClearResult(rs)
 
     # Build and run the query to insert each row
     query <- "
@@ -431,8 +435,8 @@ update_db_authors <- function(
 #' @param dbfile Path to a SQLite briefings database.
 #' @export
 
-update_db_documents <- function(
-    documents_data, dbc = NULL, dbfile = BRIEFINGS_DB) {
+update_mirror_documents <- function(
+    documents_data, dbc = NULL, dbfile = MIRROR_DB) {
 
     # Determine if the function sould create its own conection or not
     has_own_connection <- FALSE
@@ -448,7 +452,19 @@ update_db_documents <- function(
     to_date <- lubridate::today("GMT")
 
     documents_snapshot <- documents_data %>%
-        dplyr::filter(date > from_date & date < to_date)
+        dplyr::filter(date >= from_date & date <= to_date)
+
+    # Build and run the query to delete updated briefings
+    query <- "DELETE FROM documents WHERE resource = :resource"
+
+    rs <- DBI::dbSendStatement(dbc, query)
+
+    purrr::pmap(documents_snapshot, function(...) {
+        document <- list(...)
+        DBI::dbBind(rs, param = list(resource = document$resource))
+    })
+
+    DBI::dbClearResult(rs)
 
     # Build and run the query to insert each row
     query <- "
@@ -509,75 +525,52 @@ update_db_documents <- function(
 
 # Get tables ------------------------------------------------------------------
 
-#' Get a table from the database as a tibble
-#'
-#' @param table_name The name of the table to retreive from the database.
-#' @param dbc A connection to a SQLite briefings database.
-#' @param dbfile Path to a SQLite briefings database.
-#' @export
-
-get_db_table <- function(table_name, dbc = NULL, dbfile = BRIEFINGS_DB) {
-
-    # Determine if the function sould create its own conection or not
-    has_own_connection <- FALSE
-
-    if (is.null(dbc)) {
-        dbc <- DBI::dbConnect(RSQLite::SQLite(), dbfile)
-        has_own_connection <- TRUE
-    }
-
-    df <- tibble::as_tibble(DBI::dbReadTable(dbc, table_name))
-    df$date <- as.Date(df$date, origin = lubridate::origin)
-    if(has_own_connection) DBI::dbDisconnect(dbc)
-    df %>% dplyr::arrange(dplyr::desc(.data$date))
-}
-
-#' Get the briefings table from the database as a tibble
+#' Get the briefings table from the mirror as a tibble
 #'
 #' @param dbc A connection to a SQLite briefings database.
 #' @param dbfile Path to a SQLite briefings database.
 #' @export
 
-get_db_briefings <- function(dbc = NULL, dbfile = BRIEFINGS_DB) {
+get_mirror_briefings <- function(dbc = NULL, dbfile = MIRROR_DB) {
     get_db_table("briefings", dbc = dbc, dbfile = dbfile)
 }
 
-#' Get the topics table from the database as a tibble
+#' Get the topics table from the mirror as a tibble
 #'
 #' @param dbc A connection to a SQLite briefings database.
 #' @param dbfile Path to a SQLite briefings database.
 #' @export
 
-get_db_topics <- function(dbc = NULL, dbfile = BRIEFINGS_DB) {
+get_mirror_topics <- function(dbc = NULL, dbfile = MIRROR_DB) {
     get_db_table("topics", dbc = dbc, dbfile = dbfile)
 }
 
-#' Get the sections table from the database as a tibble
+#' Get the sections table from the mirror as a tibble
 #'
 #' @param dbc A connection to a SQLite briefings database.
 #' @param dbfile Path to a SQLite briefings database.
 #' @export
 
-get_db_sections <- function(dbc = NULL, dbfile = BRIEFINGS_DB) {
+get_mirror_sections <- function(dbc = NULL, dbfile = MIRROR_DB) {
     get_db_table("sections", dbc = dbc, dbfile = dbfile)
 }
 
-#' Get the authors table from the database as a tibble
+#' Get the authors table from the mirror as a tibble
 #'
 #' @param dbc A connection to a SQLite briefings database.
 #' @param dbfile Path to a SQLite briefings database.
 #' @export
 
-get_db_authors <- function(dbc = NULL, dbfile = BRIEFINGS_DB) {
+get_mirror_authors <- function(dbc = NULL, dbfile = MIRROR_DB) {
     get_db_table("authors", dbc = dbc, dbfile = dbfile)
 }
 
-#' Get the documents table from the database as a tibble
+#' Get the documents table from the mirror as a tibble
 #'
 #' @param dbc A connection to a SQLite briefings database.
 #' @param dbfile Path to a SQLite briefings database.
 #' @export
 
-get_db_documents <- function(dbc = NULL, dbfile = BRIEFINGS_DB) {
+get_mirror_documents <- function(dbc = NULL, dbfile = MIRROR_DB) {
     get_db_table("documents", dbc = dbc, dbfile = dbfile)
 }
