@@ -8,7 +8,7 @@ Install from GitHub using remotes.
 
 ``` r
 install.packages("remotes")
-remotes::install_github("olihawkins/clbrief")
+remotes::install_github("houseofcommonslibrary/clbrief")
 ```
 
 ## Overview

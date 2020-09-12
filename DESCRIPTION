@@ -2,8 +2,12 @@ Package: clbrief
 Type: Package
 Title: Download data on Parliamentary Research Briefings
 Version: 0.2.0
-Author: Oliver Hawkins
-Maintainer: Oliver Hawkins <oli@olihawkins.com>
+Authors@R: 
+    person(
+        given = "Oliver",
+        family = "Hawkins",
+        role = c("aut", "cre"),
+        email = "oli@olihawkins.com")
 Description: A package for downloading data from the UK Parliament's Research 
     Briefings API.
 License: BSD_3_clause + file LICENSE
@@ -22,4 +26,4 @@ Imports:
     RSQLite,
     stringr,
     tibble
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
